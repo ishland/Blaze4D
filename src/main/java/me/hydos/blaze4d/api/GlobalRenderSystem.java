@@ -56,7 +56,7 @@ public class GlobalRenderSystem {
     public static Set<ConsumerRenderObject> currentFrameObjects = Collections.newSetFromMap(new Object2ObjectLinkedOpenHashMap<>()); // this is sorted
 
     // Active Fields
-    public static final int maxTextures = 12;
+    public static final int maxTextures = 16; //FIXME vanilla is 12, Iris is 16
     public static int[] boundTextureIds = new int[maxTextures]; // TODO: generate an identifier instead of using int id, or switch everything over to ints
     public static int activeTexture = 0;
 

@@ -2,11 +2,11 @@ package me.hydos.rosella.render.material
 
 import me.hydos.rosella.Rosella
 import me.hydos.rosella.device.VulkanDevice
+import me.hydos.rosella.fbo.RenderPass
 import me.hydos.rosella.render.Topology
 import me.hydos.rosella.render.material.state.StateInfo
 import me.hydos.rosella.render.renderer.Renderer
 import me.hydos.rosella.render.shader.ShaderProgram
-import me.hydos.rosella.render.swapchain.RenderPass
 import me.hydos.rosella.render.swapchain.Swapchain
 import me.hydos.rosella.render.util.ok
 import me.hydos.rosella.render.vertex.VertexFormat

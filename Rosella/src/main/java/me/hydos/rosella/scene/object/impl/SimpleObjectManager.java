@@ -2,6 +2,7 @@ package me.hydos.rosella.scene.object.impl;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import me.hydos.rosella.Rosella;
+import me.hydos.rosella.fbo.RenderPass;
 import me.hydos.rosella.render.info.InstanceInfo;
 import me.hydos.rosella.render.info.RenderInfo;
 import me.hydos.rosella.render.material.Material;
@@ -10,7 +11,6 @@ import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.render.shader.RawShaderProgram;
 import me.hydos.rosella.render.shader.ShaderManager;
 import me.hydos.rosella.render.shader.ShaderProgram;
-import me.hydos.rosella.render.swapchain.RenderPass;
 import me.hydos.rosella.render.texture.TextureManager;
 import me.hydos.rosella.scene.object.ObjectManager;
 import me.hydos.rosella.scene.object.Renderable;

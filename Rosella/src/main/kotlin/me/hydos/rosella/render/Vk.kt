@@ -7,10 +7,10 @@ package me.hydos.rosella.render
 
 import me.hydos.rosella.device.QueueFamilyIndices
 import me.hydos.rosella.device.VulkanDevice
+import me.hydos.rosella.fbo.RenderPass
 import me.hydos.rosella.memory.Memory
 import me.hydos.rosella.render.renderer.Renderer
 import me.hydos.rosella.render.swapchain.DepthBuffer
-import me.hydos.rosella.render.swapchain.RenderPass
 import me.hydos.rosella.render.swapchain.Swapchain
 import me.hydos.rosella.render.texture.ImageRegion
 import me.hydos.rosella.render.texture.Texture

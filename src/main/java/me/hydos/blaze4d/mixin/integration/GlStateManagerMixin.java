@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = GlStateManager.class, remap = false)
-public class GlStateManagerMixin {
+public abstract class GlStateManagerMixin {
 
     @Inject(method = {
             "_texParameter(IIF)V",
@@ -170,8 +170,8 @@ public class GlStateManagerMixin {
         cir.setReturnValue(GlobalRenderSystem.activeTexture + GL13.GL_TEXTURE0);
     }
 
-    @Inject(method = "_activeTexture", at = @At("HEAD"), cancellable = true)
-    private static void activeTexture(int texture, CallbackInfo ci) {
+    @Inject(method = "glActiveTexture", at = @At("HEAD"), cancellable = true)
+    private static void glActiveTexture(int texture, CallbackInfo ci) {
         GlobalRenderSystem.activeTexture = texture - GL13.GL_TEXTURE0;
         ci.cancel();
     }

@@ -21,7 +21,6 @@ class Swapchain(
     private var maxImages: IntBuffer
     var swapChain: Long = 0
     var swapChainImageViews: MutableList<Long> = ArrayList()
-    var frameBuffers: MutableList<Long> = ArrayList()
     var swapChainImages: MutableList<Long> = ArrayList()
     var swapChainImageFormat = 0
     var swapChainExtent: VkExtent2D

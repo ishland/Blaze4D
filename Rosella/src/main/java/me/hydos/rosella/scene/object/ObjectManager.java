@@ -1,11 +1,11 @@
 package me.hydos.rosella.scene.object;
 
 import me.hydos.rosella.Rosella;
+import me.hydos.rosella.fbo.RenderPass;
 import me.hydos.rosella.render.material.Material;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.render.shader.RawShaderProgram;
 import me.hydos.rosella.render.shader.ShaderProgram;
-import me.hydos.rosella.render.swapchain.RenderPass;
 
 /**
  * Allows for multiple ways for the engine to handle objects.

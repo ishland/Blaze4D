@@ -3,6 +3,7 @@ package me.hydos.rosella.vkobjects;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.device.VulkanQueues;
 import me.hydos.rosella.display.Display;
+import me.hydos.rosella.fbo.FrameBufferManager;
 import me.hydos.rosella.memory.Memory;
 import me.hydos.rosella.util.SemaphorePool;
 
@@ -45,4 +46,9 @@ public class VkCommon {
      * The Presentation and Graphics queue.
      */
     public VulkanQueues queues;
+
+    /**
+     * The Thing which manages Frame buffer Objects (FBO's)
+     */
+    public FrameBufferManager fboManager;
 }

@@ -9,8 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TextureAtlasSprite.AnimatedTexture.class)
 public class Sprite$AnimationMixin {
 
+/*  //FIXME: Iris didnt like this
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void nope(CallbackInfo ci) {
         ci.cancel();
-    }
+    }*/
 }
