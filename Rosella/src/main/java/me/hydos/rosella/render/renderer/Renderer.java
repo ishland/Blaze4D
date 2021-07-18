@@ -299,12 +299,17 @@ public class Renderer {
         }
     }
 
+    @Deprecated
+    public void rebuildCommandBuffers(RenderPass renderPass) {
+        for (FrameBuffer frameBuffer : common.fboManager.frameBuffers) {
+            rebuildCommandBuffers(renderPass, frameBuffer);
+        }
+    }
+
     /**
      * Create the Command Buffers
      */
-    public void rebuildCommandBuffers(RenderPass renderPass) {
-        FrameBuffer frameBuffer = common.fboManager.getMainFbo();
-
+    public void rebuildCommandBuffers(RenderPass renderPass, FrameBuffer frameBuffer) {
         if (!recreateSwapChain) {
             for (List<InstanceInfo> instances : frameBuffer.objectManager.renderObjects.values()) {
                 for (InstanceInfo instance : instances) {
