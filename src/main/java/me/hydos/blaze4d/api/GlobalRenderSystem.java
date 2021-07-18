@@ -145,7 +145,7 @@ public class GlobalRenderSystem {
         Texture[] textures = new Texture[maxTextures];
         for (int i = 0; i < maxTextures; i++) {
             int texId = boundTextureIds[i];
-            textures[i] = texId == TextureManager.BLANK_TEXTURE_ID ? null : ((SimpleObjectManager) Blaze4D.rosella.objectManager).textureManager.getTexture(texId);
+            textures[i] = texId == TextureManager.BLANK_TEXTURE_ID ? null : Blaze4D.rosella.common.textureManager.getTexture(texId);
         }
         return textures;
     }

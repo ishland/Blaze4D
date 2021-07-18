@@ -47,7 +47,7 @@ public abstract class NativeImageMixin implements UploadableImage {
 
     @Inject(method = "_upload", at = @At("HEAD"), cancellable = true)
     private void uploadToRosella(int level, int offsetX, int offsetY, int unpackSkipPixels, int unpackSkipRows, int width, int height, boolean blur, boolean clamp, boolean mipmap, boolean close, CallbackInfo ci) {
-        TextureManager textureManager = ((SimpleObjectManager) Blaze4D.rosella.objectManager).textureManager;
+        TextureManager textureManager = Blaze4D.rosella.common.textureManager;
         textureManager.setTextureSampler(
                 GlobalRenderSystem.boundTextureIds[GlobalRenderSystem.activeTexture],
                 GlobalRenderSystem.activeTexture, // TODO: I think it's fine to assume texture no. here, but double check

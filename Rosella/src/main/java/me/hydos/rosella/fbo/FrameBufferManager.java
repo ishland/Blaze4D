@@ -22,7 +22,7 @@ public class FrameBufferManager {
     private final Swapchain swapchain;
     private final VkCommon common;
     private final Renderer renderer;
-    public final List<Framebuffer> framebuffers = new ArrayList<>();
+    public final List<FrameBuffer> frameBuffers = new ArrayList<>();
 
     public FrameBufferManager(Swapchain swapchain, Renderer renderer, VkCommon common) {
         this.swapchain = swapchain;
@@ -30,7 +30,7 @@ public class FrameBufferManager {
         this.common = common;
     }
 
-    public Framebuffer createFrameBuffer(RenderPass renderPass) {
+    public FrameBuffer createFrameBuffer(RenderPass renderPass) {
         LongArrayList imageViews = new LongArrayList(swapchain.getSwapChainImageViews().size());
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer attachments = stack.longs(VK_NULL_HANDLE, renderer.depthBuffer.getDepthImageView());
@@ -49,18 +49,12 @@ public class FrameBufferManager {
             }
         }
 
-        Framebuffer framebuffer = new Framebuffer(imageViews);
-        framebuffers.add(framebuffer);
+        FrameBuffer framebuffer = new FrameBuffer(imageViews);
+        frameBuffers.add(framebuffer);
         return framebuffer;
     }
 
-    public int getFboCount() {
-        int result = 0;
-        for (Framebuffer framebuffer : framebuffers) {
-            for (Long imageView : framebuffer.imageViews()) {
-                result += 1;
-            }
-        }
-        return result;
+    public FrameBuffer getMainFbo() {
+        return frameBuffers.get(0);
     }
 }

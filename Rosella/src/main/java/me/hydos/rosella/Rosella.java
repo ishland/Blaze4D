@@ -7,6 +7,7 @@ import me.hydos.rosella.logging.DebugLogger;
 import me.hydos.rosella.logging.DefaultDebugLogger;
 import me.hydos.rosella.memory.ThreadPoolMemory;
 import me.hydos.rosella.memory.buffer.GlobalBufferManager;
+import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.scene.object.ObjectManager;
 import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
@@ -30,7 +31,6 @@ import static me.hydos.rosella.render.util.VkUtilsKt.ok;
 import static org.lwjgl.vulkan.EXTDebugUtils.vkDestroyDebugUtilsMessengerEXT;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
 import static org.lwjgl.vulkan.VK10.*;
-import static org.lwjgl.vulkan.VK12.VK_API_VERSION_1_2;
 
 /**
  * Main Rosella class. If your interacting with the engine from here, You will most likely be safe.
@@ -38,7 +38,7 @@ import static org.lwjgl.vulkan.VK12.VK_API_VERSION_1_2;
 public class Rosella {
 
     public static final Logger LOGGER = LogManager.getLogger("Rosella", new StringFormatterMessageFactory());
-    public static final int VULKAN_VERSION = VK_API_VERSION_1_2;
+    public static final int VULKAN_VERSION = VK_API_VERSION_1_0;
     public static final int POLYGON_MODE = VK_POLYGON_MODE_FILL;
     public final GlobalBufferManager bufferManager;
     public final VkCommon common = new VkCommon();
@@ -67,7 +67,8 @@ public class Rosella {
         // Setup the object manager
         this.objectManager = new SimpleObjectManager(this, common);
         this.renderer = new Renderer(this); //TODO: make swapchain, etc initialization happen outside of the renderer and in here
-        ((SimpleObjectManager) objectManager).textureManager.initializeBlankTexture(renderer);
+        common.textureManager.initializeBlankTexture(renderer);
+        common.pipelineManager = new PipelineManager(common, renderer);
         this.objectManager.postInit(renderer);
         this.bufferManager = new GlobalBufferManager(this);
 
@@ -81,6 +82,7 @@ public class Rosella {
     public void free() {
         common.device.waitForIdle();
         objectManager.free();
+        common.shaderManager.free();
         renderer.free();
 
         // Free the rest of it

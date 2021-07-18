@@ -17,7 +17,7 @@ public class TextureUtilMixin {
     @Inject(method = "prepareImage(Lcom/mojang/blaze3d/platform/NativeImage$InternalGlFormat;IIII)V", at = @At("HEAD"), remap = false, cancellable = true)
     private static void createRosellaTexture(NativeImage.InternalGlFormat internalFormat, int id, int maxLevel, int width, int height, CallbackInfo ci) {
         GlobalRenderSystem.boundTextureIds[GlobalRenderSystem.activeTexture] = id;
-        ((SimpleObjectManager) Blaze4D.rosella.objectManager).textureManager.createTexture(
+        Blaze4D.rosella.common.textureManager.createTexture(
                 Blaze4D.rosella.renderer,
                 id,
                 width,

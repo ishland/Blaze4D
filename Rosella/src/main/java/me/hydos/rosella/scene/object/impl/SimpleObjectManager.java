@@ -6,7 +6,6 @@ import me.hydos.rosella.fbo.RenderPass;
 import me.hydos.rosella.render.info.InstanceInfo;
 import me.hydos.rosella.render.info.RenderInfo;
 import me.hydos.rosella.render.material.Material;
-import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.render.shader.RawShaderProgram;
 import me.hydos.rosella.render.shader.ShaderManager;
@@ -25,20 +24,17 @@ import java.util.Map;
  */
 public class SimpleObjectManager implements ObjectManager {
 
+    private final Rosella rosella;
     public Renderer renderer;
     private final VkCommon common;
-    private final Rosella rosella;
-    public final ShaderManager shaderManager;
-    public final TextureManager textureManager;
-    public PipelineManager pipelineManager;
     public final Map<RenderInfo, List<InstanceInfo>> renderObjects = new Object2ObjectArrayMap<>();
 
     public final List<Material> materials = new ArrayList<>();
     public final List<Material> unprocessedMaterials = new ArrayList<>();
 
     public SimpleObjectManager(Rosella rosella, VkCommon common) {
-        this.shaderManager = new ShaderManager(rosella);
-        this.textureManager = new TextureManager(common);
+        common.shaderManager = new ShaderManager(rosella);
+        common.textureManager = new TextureManager(common);
         this.rosella = rosella;
         this.common = common;
     }
@@ -53,7 +49,6 @@ public class SimpleObjectManager implements ObjectManager {
         if (!renderObjects.containsKey(obj.getRenderInfo())) {
             renderObjects.put(obj.getRenderInfo(), new ArrayList<>());
         }
-//        obj.onAddedToScene(common, renderer, rosella.common.memory);
         obj.onAddedToScene(rosella);
         renderObjects.get(obj.getRenderInfo()).add(obj.getInstanceInfo());
         return obj;
@@ -68,7 +63,7 @@ public class SimpleObjectManager implements ObjectManager {
 
     @Override
     public ShaderProgram addShader(RawShaderProgram program) {
-        return shaderManager.getOrCreateShader(program);
+        return common.shaderManager.getOrCreateShader(program);
     }
 
     @Override
@@ -77,7 +72,7 @@ public class SimpleObjectManager implements ObjectManager {
             if (material.getShader().getRaw().getDescriptorSetLayout() == 0L) {
                 material.getShader().getRaw().createDescriptorSetLayout();
             }
-            material.pipeline = pipelineManager.getPipeline(material, renderer);
+            material.pipeline = common.pipelineManager.getPipeline(material, renderer);
             materials.add(material);
         }
         unprocessedMaterials.clear();
@@ -86,13 +81,10 @@ public class SimpleObjectManager implements ObjectManager {
     @Override
     public void free() {
         materials.clear();
-
-        shaderManager.free();
     }
 
     @Override
     public void postInit(Renderer renderer) {
         this.renderer = renderer;
-        this.pipelineManager = new PipelineManager(common, renderer);
     }
 }

@@ -47,7 +47,7 @@ public abstract class RenderSystemMixin {
         }
         RenderSystemMixin.shader = result;
         RawShaderProgram rawProgram = GlobalRenderSystem.SHADER_PROGRAM_MAP.get(RenderSystemMixin.shader.getId());
-        GlobalRenderSystem.activeShader = ((SimpleObjectManager) Blaze4D.rosella.objectManager).shaderManager.getOrCreateShader(rawProgram);
+        GlobalRenderSystem.activeShader = Blaze4D.rosella.common.shaderManager.getOrCreateShader(rawProgram);
     }
 
     @Inject(method = "applyModelViewMatrix", at = @At("HEAD"))

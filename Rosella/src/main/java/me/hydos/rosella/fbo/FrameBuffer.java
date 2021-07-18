@@ -5,5 +5,5 @@ import it.unimi.dsi.fastutil.longs.LongList;
 /**
  * Information for a FrameBuffer Object
  */
-public record Framebuffer(LongList imageViews) {
+public record FrameBuffer(LongList imageViews) {
 }
