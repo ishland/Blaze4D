@@ -14,6 +14,7 @@ import me.hydos.rosella.render.texture.SamplerCreateInfo;
 import me.hydos.rosella.render.texture.TextureFilter;
 import me.hydos.rosella.render.texture.WrapMode;
 import me.hydos.rosella.render.vertex.VertexFormats;
+import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
 import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -60,7 +61,7 @@ public class PortalJava {
         loadShaders();
         loadMaterials();
         setupMainMenuScene();
-        rosella.renderer.rebuildCommandBuffers(rosella.renderer.renderPass, (SimpleFramebufferObjectManager) rosella.objectManager);
+        rosella.renderer.rebuildCommandBuffers(rosella.renderer.renderPass, (SimpleGlobalObjectManager) rosella.objectManager);
         window.startAutomaticLoop(rosella);
     }
 
