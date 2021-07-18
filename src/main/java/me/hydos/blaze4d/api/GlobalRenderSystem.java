@@ -1,7 +1,6 @@
 package me.hydos.blaze4d.api;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.Pair;
@@ -26,18 +25,15 @@ import me.hydos.rosella.render.texture.Texture;
 import me.hydos.rosella.render.texture.TextureManager;
 import me.hydos.rosella.render.vertex.StoredBufferProvider;
 import me.hydos.rosella.render.vertex.VertexFormats;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
+import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.VK10;
 
-import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Used to make bits of the code easier to manage.
@@ -125,12 +121,12 @@ public class GlobalRenderSystem {
         Blaze4D.rosella.common.device.waitForIdle();
         GlobalRenderSystem.renderConsumers();
 
-        ((SimpleObjectManager) Blaze4D.rosella.objectManager).renderObjects.clear();
+        Blaze4D.rosella.getMainFboObjManager().renderObjects.clear();
         for (ConsumerRenderObject renderObject : currentFrameObjects) {
-            Blaze4D.rosella.objectManager.addObject(renderObject);
+            Blaze4D.rosella.getMainFboObjManager().addObject(renderObject);
         }
 
-        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleObjectManager) Blaze4D.rosella.objectManager);
+        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleGlobalObjectManager) Blaze4D.rosella.objectManager);
 
         Blaze4D.window.update();
         Blaze4D.rosella.renderer.render();

@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.TextureUtil;
 import me.hydos.blaze4d.Blaze4D;
 import me.hydos.blaze4d.api.GlobalRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

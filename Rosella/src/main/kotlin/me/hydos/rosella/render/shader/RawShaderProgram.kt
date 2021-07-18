@@ -12,7 +12,7 @@ import me.hydos.rosella.render.swapchain.Swapchain
 import me.hydos.rosella.render.texture.Texture
 import me.hydos.rosella.render.texture.TextureManager
 import me.hydos.rosella.render.util.ok
-import me.hydos.rosella.scene.`object`.impl.SimpleObjectManager
+import me.hydos.rosella.scene.`object`.impl.SimpleFramebufferObjectManager
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
@@ -30,7 +30,7 @@ open class RawShaderProgram(
 
     private val preparableTextures = ReferenceOpenHashSet<Texture?>(3, VERY_FAST_LOAD_FACTOR)
 
-    fun updateUbos(currentImage: Int, swapchain: Swapchain, objectManager: SimpleObjectManager) {
+    fun updateUbos(currentImage: Int, swapchain: Swapchain, objectManager: SimpleFramebufferObjectManager) {
         for (instances in objectManager.renderObjects.values) {
             for (instance in instances) {
                 instance.ubo.update(

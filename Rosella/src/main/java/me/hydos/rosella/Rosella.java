@@ -9,8 +9,9 @@ import me.hydos.rosella.memory.ThreadPoolMemory;
 import me.hydos.rosella.memory.buffer.GlobalBufferManager;
 import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.renderer.Renderer;
-import me.hydos.rosella.scene.object.ObjectManager;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
+import me.hydos.rosella.scene.object.GlobalObjectManager;
+import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
+import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
 import me.hydos.rosella.util.SemaphorePool;
 import me.hydos.rosella.vkobjects.VkCommon;
 import me.hydos.rosella.vkobjects.VulkanInstance;
@@ -41,9 +42,9 @@ public class Rosella {
     public static final int VULKAN_VERSION = VK_API_VERSION_1_0;
     public static final int POLYGON_MODE = VK_POLYGON_MODE_FILL;
     public final GlobalBufferManager bufferManager;
+    public final GlobalObjectManager objectManager;
     public final VkCommon common = new VkCommon();
     public final Renderer renderer;
-    public final ObjectManager objectManager;
 
     public Rosella(Display display, String applicationName, boolean enableBasicValidation) {
         this(display, enableBasicValidation ? Collections.singletonList("VK_LAYER_KHRONOS_validation") : Collections.emptyList(), applicationName, new DefaultDebugLogger());
@@ -63,13 +64,12 @@ public class Rosella {
         common.queues = new VulkanQueues(common);
         common.memory = new ThreadPoolMemory(common);
         common.semaphorePool = new SemaphorePool(common.device.rawDevice);
+        this.objectManager = new SimpleGlobalObjectManager(this, common);
 
         // Setup the object manager
-        this.objectManager = new SimpleObjectManager(this, common);
         this.renderer = new Renderer(this); //TODO: make swapchain, etc initialization happen outside of the renderer and in here
+        ((SimpleGlobalObjectManager) this.objectManager).setRenderer(this.renderer); //FIXME ew
         common.textureManager.initializeBlankTexture(renderer);
-        common.pipelineManager = new PipelineManager(common, renderer);
-        this.objectManager.postInit(renderer);
         this.bufferManager = new GlobalBufferManager(this);
 
         // Tell the display we are initialized
@@ -81,7 +81,6 @@ public class Rosella {
      */
     public void free() {
         common.device.waitForIdle();
-        objectManager.free();
         common.shaderManager.free();
         renderer.free();
 
@@ -132,5 +131,9 @@ public class Rosella {
 
     static {
         LOGGER.atLevel(Level.ALL);
+    }
+
+    public SimpleFramebufferObjectManager getMainFboObjManager() {
+        return common.fboManager.getMainFbo().objectManager;
     }
 }

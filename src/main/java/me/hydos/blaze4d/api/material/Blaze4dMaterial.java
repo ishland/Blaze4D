@@ -11,7 +11,8 @@ import me.hydos.rosella.render.texture.Texture;
 import me.hydos.rosella.render.texture.TextureFilter;
 import me.hydos.rosella.render.texture.WrapMode;
 import me.hydos.rosella.render.vertex.VertexFormat;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
+import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.vulkan.VK10;
 
 public class Blaze4dMaterial extends Material {
@@ -23,7 +24,7 @@ public class Blaze4dMaterial extends Material {
     }
 
     @Override
-    public void loadTextures(SimpleObjectManager objectManager, Rosella rosella) {
+    public void loadTextures(@NotNull Rosella rosella) {
         // noop
     }
 }

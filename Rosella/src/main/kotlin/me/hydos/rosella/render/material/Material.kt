@@ -7,7 +7,6 @@ import me.hydos.rosella.render.resource.Resource
 import me.hydos.rosella.render.shader.ShaderProgram
 import me.hydos.rosella.render.texture.*
 import me.hydos.rosella.render.vertex.VertexFormat
-import me.hydos.rosella.scene.`object`.impl.SimpleObjectManager
 
 /**
  * A Material is like texture information, normal information, and all of those things which give an object character wrapped into one class.
@@ -27,7 +26,7 @@ open class Material(
 
     lateinit var textures: Array<Texture?>
 
-    open fun loadTextures(objectManager: SimpleObjectManager, rosella: Rosella) { //FIXME this is also temporary
+    open fun loadTextures(rosella: Rosella) { //FIXME this is also temporary
         if (resource != Resource.Empty) {
             val textureManager = rosella.common.textureManager
             val textureId = textureManager.generateTextureId() // FIXME this texture can't be removed

@@ -11,7 +11,8 @@ import me.hydos.rosella.render.resource.Identifier;
 import me.hydos.rosella.render.resource.Resource;
 import me.hydos.rosella.render.shader.RawShaderProgram;
 import me.hydos.rosella.render.shader.ShaderType;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
+import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
+import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
 import org.lwjgl.opengl.GL20;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -108,7 +109,7 @@ public class GlStateManagerMixin {
         GlobalRenderSystem.processedSamplers.clear();
         GlobalRenderSystem.currentSamplerBinding = 1;
         GlobalRenderSystem.SHADER_PROGRAM_MAP.put(GlobalRenderSystem.nextShaderProgramId, program);
-        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleObjectManager) Blaze4D.rosella.objectManager);
+        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleGlobalObjectManager) Blaze4D.rosella.objectManager);
         return GlobalRenderSystem.nextShaderProgramId++;
     }
 

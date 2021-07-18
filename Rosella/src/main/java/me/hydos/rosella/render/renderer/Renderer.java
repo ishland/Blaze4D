@@ -6,8 +6,8 @@ import me.hydos.rosella.Rosella;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.device.VulkanQueues;
 import me.hydos.rosella.display.Display;
-import me.hydos.rosella.fbo.FrameBufferManager;
 import me.hydos.rosella.fbo.FrameBuffer;
+import me.hydos.rosella.fbo.FrameBufferManager;
 import me.hydos.rosella.fbo.RenderPass;
 import me.hydos.rosella.memory.BufferInfo;
 import me.hydos.rosella.memory.Memory;
@@ -16,11 +16,13 @@ import me.hydos.rosella.render.VkKt;
 import me.hydos.rosella.render.info.InstanceInfo;
 import me.hydos.rosella.render.info.RenderInfo;
 import me.hydos.rosella.render.material.Material;
+import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.shader.RawShaderProgram;
 import me.hydos.rosella.render.swapchain.DepthBuffer;
 import me.hydos.rosella.render.swapchain.Frame;
 import me.hydos.rosella.render.swapchain.Swapchain;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
+import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
+import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
 import me.hydos.rosella.util.Color;
 import me.hydos.rosella.vkobjects.VkCommon;
 import org.lwjgl.PointerBuffer;
@@ -78,7 +80,7 @@ public class Renderer {
         this.depthBuffer = new DepthBuffer();
 
         VkKt.createCmdPool(common.device, this, common.surface);
-        createSwapChain(common, common.display, ((SimpleObjectManager) rosella.objectManager));
+        createSwapChain(common, common.display, ((SimpleGlobalObjectManager) rosella.objectManager));
         initialSwapchainCreated = true;
     }
 
@@ -88,17 +90,18 @@ public class Renderer {
     public long commandPool = 0;
     List<VkCommandBuffer> commandBuffers = new ObjectArrayList<>();
 
-    private void createSwapChain(VkCommon common, Display display, SimpleObjectManager objectManager) {
+    private void createSwapChain(VkCommon common, Display display, SimpleGlobalObjectManager objectManager) {
         this.swapchain = new Swapchain(display, common.device.rawDevice, common.device.physicalDevice, common.surface);
         common.fboManager = new FrameBufferManager(swapchain, this, common);
         this.renderPass = new RenderPass(common.device, swapchain.getSwapChainImageFormat(), depthBuffer.findDepthFormat(common.device), RenderPass.RenderPassType.GRAPHICS, true, true);
         VkKt.createImgViews(swapchain, common.device);
+        common.pipelineManager = new PipelineManager(common, this);
         depthBuffer.createDepthResources(common.device, swapchain, this);
-        common.fboManager.createFrameBuffer(renderPass);
+        common.fboManager.createFrameBuffer(renderPass, rosella);
 
         // Engine may still be initialising so we do a null check just in case
-        if (rosella.common.pipelineManager != null) {
-            rosella.common.pipelineManager.invalidatePipelines(common);
+        if (common.pipelineManager != null) {
+            common.pipelineManager.invalidatePipelines(common);
         }
 
         for (Material material : objectManager.materials) {
@@ -151,7 +154,7 @@ public class Renderer {
 
             for (RawShaderProgram shader : rosella.common.shaderManager.getCachedShaders().keySet()) {
                 shader.prepareTexturesForRender(rosella.renderer, rosella.common.textureManager);
-                shader.updateUbos(imageIndex, swapchain, (SimpleObjectManager) rosella.objectManager);
+                shader.updateUbos(imageIndex, swapchain, rosella.getMainFboObjManager());
             }
 
             if (imagesInFlight.containsKey(imageIndex)) {
@@ -206,7 +209,7 @@ public class Renderer {
 
         rosella.common.device.waitForIdle();
         freeSwapChain();
-        createSwapChain(rosella.common, window, ((SimpleObjectManager) rosella.objectManager));
+        createSwapChain(rosella.common, window, (SimpleGlobalObjectManager) rosella.objectManager);
     }
 
     public void freeSwapChain() {
@@ -221,7 +224,7 @@ public class Renderer {
         depthBuffer.free(rosella.common.device);
 
         for (FrameBuffer framebuffer : common.fboManager.frameBuffers) {
-            for (long imageView : framebuffer.imageViews()) {
+            for (long imageView : framebuffer.imageViews) {
                 vkDestroyFramebuffer(
                         rosella.common.device.rawDevice,
                         imageView,
@@ -298,12 +301,11 @@ public class Renderer {
     /**
      * Create the Command Buffers
      */
-    public void rebuildCommandBuffers(RenderPass renderPass, SimpleObjectManager simpleObjectManager) {
-        // FIXME: every framebuffer needs to have its own "object manager" without the pipeline manager, shader manager, etc. allows for different fbo's to have different scenes and allows for caching to still work with the current system
+    public void rebuildCommandBuffers(RenderPass renderPass, SimpleGlobalObjectManager simpleObjectManager) {
+        FrameBuffer frameBuffer = common.fboManager.getMainFbo();
 
         if (!recreateSwapChain) {
-
-            for (List<InstanceInfo> instances : simpleObjectManager.renderObjects.values()) {
+            for (List<InstanceInfo> instances : frameBuffer.objectManager.renderObjects.values()) {
                 for (InstanceInfo instance : instances) {
                     if (requireHardRebuild) {
                         instance.hardRebuild(rosella);
@@ -314,9 +316,8 @@ public class Renderer {
             }
             requireHardRebuild = false;
 
-            FrameBuffer frameBuffer = common.fboManager.getMainFbo();
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                int commandBuffersCount = frameBuffer.imageViews().size();
+                int commandBuffersCount = frameBuffer.imageViews.size();
 
                 commandBuffers = new ObjectArrayList<>(commandBuffersCount);
 
@@ -345,21 +346,21 @@ public class Renderer {
                 renderPassInfo.renderArea(renderArea)
                         .pClearValues(clearValues);
 
-                if (rosella.bufferManager != null && !simpleObjectManager.renderObjects.isEmpty()) {
-                    rosella.bufferManager.nextFrame(simpleObjectManager.renderObjects.keySet());
+                if (rosella.bufferManager != null && !frameBuffer.objectManager.renderObjects.isEmpty()) {
+                    rosella.bufferManager.nextFrame(frameBuffer.objectManager.renderObjects.keySet());
                 }
 
                 for (int i = 0; i < commandBuffersCount; i++) {
                     VkCommandBuffer commandBuffer = commandBuffers.get(i);
                     ok(vkBeginCommandBuffer(commandBuffer, beginInfo));
-                    renderPassInfo.framebuffer(frameBuffer.imageViews().getLong(i));
+                    renderPassInfo.framebuffer(frameBuffer.imageViews.getLong(i));
 
                     vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-                    if (rosella.bufferManager != null && !simpleObjectManager.renderObjects.isEmpty()) {
+                    if (rosella.bufferManager != null && !frameBuffer.objectManager.renderObjects.isEmpty()) {
                         bindBigBuffers(rosella.bufferManager, stack, commandBuffer);
-                        for (RenderInfo renderInfo : simpleObjectManager.renderObjects.keySet()) {
-                            for (InstanceInfo instance : simpleObjectManager.renderObjects.get(renderInfo)) {
+                        for (RenderInfo renderInfo : frameBuffer.objectManager.renderObjects.keySet()) {
+                            for (InstanceInfo instance : frameBuffer.objectManager.renderObjects.get(renderInfo)) {
                                 bindInstanceInfo(instance, stack, commandBuffer, i); // TODO: check if the instance info from the previous one is the same
                                 vkCmdDrawIndexed(
                                         commandBuffer,
@@ -650,7 +651,7 @@ public class Renderer {
     public void clearColor(Color color) {
         if (clearColor != color) {
             lazilyClearColor(color);
-            rebuildCommandBuffers(renderPass, ((SimpleObjectManager) rosella.objectManager));
+            rebuildCommandBuffers(renderPass, (SimpleGlobalObjectManager) rosella.objectManager);
         }
     }
 

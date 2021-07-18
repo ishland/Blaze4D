@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.hydos.blaze4d.Blaze4D;
 import me.hydos.blaze4d.api.GlobalRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
 import me.hydos.rosella.util.Color;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.vulkan.VK10;

@@ -1,6 +1,7 @@
 package me.hydos.rosella.fbo;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import me.hydos.rosella.Rosella;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.render.swapchain.Swapchain;
 import me.hydos.rosella.vkobjects.VkCommon;
@@ -30,7 +31,7 @@ public class FrameBufferManager {
         this.common = common;
     }
 
-    public FrameBuffer createFrameBuffer(RenderPass renderPass) {
+    public FrameBuffer createFrameBuffer(RenderPass renderPass, Rosella rosella) {
         LongArrayList imageViews = new LongArrayList(swapchain.getSwapChainImageViews().size());
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer attachments = stack.longs(VK_NULL_HANDLE, renderer.depthBuffer.getDepthImageView());
@@ -49,7 +50,7 @@ public class FrameBufferManager {
             }
         }
 
-        FrameBuffer framebuffer = new FrameBuffer(imageViews);
+        FrameBuffer framebuffer = new FrameBuffer(imageViews, rosella);
         frameBuffers.add(framebuffer);
         return framebuffer;
     }

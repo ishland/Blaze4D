@@ -4,7 +4,6 @@ import me.hydos.blaze4d.Blaze4D;
 import me.hydos.blaze4d.api.GlobalRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
 import me.hydos.rosella.render.texture.*;
-import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.Final;
