@@ -25,7 +25,6 @@ import me.hydos.rosella.render.texture.Texture;
 import me.hydos.rosella.render.texture.TextureManager;
 import me.hydos.rosella.render.vertex.StoredBufferProvider;
 import me.hydos.rosella.render.vertex.VertexFormats;
-import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.vulkan.VK10;
@@ -126,7 +125,7 @@ public class GlobalRenderSystem {
             Blaze4D.rosella.getMainFboObjManager().addObject(renderObject);
         }
 
-        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleGlobalObjectManager) Blaze4D.rosella.objectManager);
+        Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass);
 
         Blaze4D.window.update();
         Blaze4D.rosella.renderer.render();

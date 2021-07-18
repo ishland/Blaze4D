@@ -7,7 +7,6 @@ import me.hydos.rosella.logging.DebugLogger;
 import me.hydos.rosella.logging.DefaultDebugLogger;
 import me.hydos.rosella.memory.ThreadPoolMemory;
 import me.hydos.rosella.memory.buffer.GlobalBufferManager;
-import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.scene.object.GlobalObjectManager;
 import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
@@ -77,6 +76,15 @@ public class Rosella {
     }
 
     /**
+     * Get's the main FBO's object manager
+     *
+     * @return the main FBO's object manager
+     */
+    public SimpleFramebufferObjectManager getMainFboObjManager() {
+        return common.fboManager.getMainFbo().objectManager;
+    }
+
+    /**
      * Free's the vulkan resources.
      */
     public void free() {
@@ -131,9 +139,5 @@ public class Rosella {
 
     static {
         LOGGER.atLevel(Level.ALL);
-    }
-
-    public SimpleFramebufferObjectManager getMainFboObjManager() {
-        return common.fboManager.getMainFbo().objectManager;
     }
 }

@@ -22,7 +22,6 @@ import me.hydos.rosella.render.swapchain.DepthBuffer;
 import me.hydos.rosella.render.swapchain.Frame;
 import me.hydos.rosella.render.swapchain.Swapchain;
 import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
-import me.hydos.rosella.scene.object.impl.SimpleFramebufferObjectManager;
 import me.hydos.rosella.util.Color;
 import me.hydos.rosella.vkobjects.VkCommon;
 import org.lwjgl.PointerBuffer;
@@ -108,7 +107,7 @@ public class Renderer {
             material.pipeline = rosella.common.pipelineManager.getPipeline(material, this);
         }
 
-        rebuildCommandBuffers(renderPass, objectManager);
+        rebuildCommandBuffers(renderPass);
         createSyncObjects();
     }
 
@@ -154,7 +153,9 @@ public class Renderer {
 
             for (RawShaderProgram shader : rosella.common.shaderManager.getCachedShaders().keySet()) {
                 shader.prepareTexturesForRender(rosella.renderer, rosella.common.textureManager);
-                shader.updateUbos(imageIndex, swapchain, rosella.getMainFboObjManager());
+                for (FrameBuffer frameBuffer : common.fboManager.frameBuffers) {
+                    shader.updateUbos(imageIndex, swapchain, frameBuffer.objectManager);
+                }
             }
 
             if (imagesInFlight.containsKey(imageIndex)) {
@@ -301,7 +302,7 @@ public class Renderer {
     /**
      * Create the Command Buffers
      */
-    public void rebuildCommandBuffers(RenderPass renderPass, SimpleGlobalObjectManager simpleObjectManager) {
+    public void rebuildCommandBuffers(RenderPass renderPass) {
         FrameBuffer frameBuffer = common.fboManager.getMainFbo();
 
         if (!recreateSwapChain) {
@@ -651,7 +652,7 @@ public class Renderer {
     public void clearColor(Color color) {
         if (clearColor != color) {
             lazilyClearColor(color);
-            rebuildCommandBuffers(renderPass, (SimpleGlobalObjectManager) rosella.objectManager);
+            rebuildCommandBuffers(renderPass);
         }
     }
 
