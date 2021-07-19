@@ -32,8 +32,6 @@ public class SimpleFramebufferObjectManager implements FramebufferObjectManager 
     public final List<Material> unprocessedMaterials = new ArrayList<>();
 
     public SimpleFramebufferObjectManager(Rosella rosella, VkCommon common) {
-        common.shaderManager = new ShaderManager(rosella);
-        common.textureManager = new TextureManager(common);
         this.rosella = rosella;
         this.common = common;
     }

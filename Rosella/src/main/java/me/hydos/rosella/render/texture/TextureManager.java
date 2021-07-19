@@ -76,6 +76,10 @@ public class TextureManager {
     public void setTextureSampler(int textureId, int textureNo, SamplerCreateInfo samplerCreateInfo) {
         Map<Integer, TextureSampler> textureNoMap = samplerCache.computeIfAbsent(samplerCreateInfo, s -> new HashMap<>());
         TextureSampler textureSampler = textureNoMap.computeIfAbsent(textureNo, t -> new TextureSampler(samplerCreateInfo, common.device));
+
+        if (!textureMap.containsKey(textureId)) {
+            throw new RuntimeException("Tried to set texture sampler of a texture which doesnt exist");
+        }
         textureMap.get(textureId).setTextureSampler(textureSampler.getPointer());
     }
 

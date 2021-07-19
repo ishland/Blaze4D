@@ -3,7 +3,9 @@ package me.hydos.rosella.fbo;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import me.hydos.rosella.Rosella;
 import me.hydos.rosella.render.renderer.Renderer;
+import me.hydos.rosella.render.shader.ShaderManager;
 import me.hydos.rosella.render.swapchain.Swapchain;
+import me.hydos.rosella.render.texture.TextureManager;
 import me.hydos.rosella.vkobjects.VkCommon;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
@@ -52,6 +54,8 @@ public class FrameBufferManager {
         }
 
         FrameBuffer framebuffer = new FrameBuffer(imageViews, rosella);
+        common.shaderManager = new ShaderManager(rosella);
+        common.textureManager = new TextureManager(common);
         frameBuffers.add(framebuffer);
         return framebuffer;
     }

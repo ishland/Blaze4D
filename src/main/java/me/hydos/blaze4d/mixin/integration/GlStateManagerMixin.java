@@ -161,6 +161,7 @@ public abstract class GlStateManagerMixin {
     @Inject(method = "_bindTexture", at = @At("HEAD"), cancellable = true)
     private static void bindTexture(int texture, CallbackInfo ci) {
         GlobalRenderSystem.boundTextureIds[GlobalRenderSystem.activeTexture] = texture;
+        System.out.println(texture);
         ci.cancel();
     }
 
