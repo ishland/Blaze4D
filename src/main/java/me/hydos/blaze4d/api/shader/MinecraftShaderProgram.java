@@ -3,13 +3,11 @@ package me.hydos.blaze4d.api.shader;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.shaders.Uniform;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.memory.Memory;
 import me.hydos.rosella.render.material.Material;
 import me.hydos.rosella.render.resource.Resource;
 import me.hydos.rosella.render.shader.RawShaderProgram;
-import me.hydos.rosella.render.shader.ShaderType;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +20,7 @@ public class MinecraftShaderProgram extends RawShaderProgram {
 
     public static final Map<String, MinecraftUbo.AddUboMemoryStep> UBO_MEMORY_STEP_MAP;
     public static final Map<Integer, Integer> UNIFORM_SIZES;
+    public static final int MAIN_FBO_OFFSET = -10;
 
     static {
         UBO_MEMORY_STEP_MAP = new ImmutableMap.Builder<String, MinecraftUbo.AddUboMemoryStep>()
@@ -72,7 +71,7 @@ public class MinecraftShaderProgram extends RawShaderProgram {
             String name = sampler.getKey();
             int bindingLocation = sampler.getIntValue();
             if (name.equals("DiffuseSampler")) {
-                types.add(new PoolSamplerInfo(bindingLocation, -1)); // TODO: set to framebuffer
+                types.add(new PoolSamplerInfo(bindingLocation, MAIN_FBO_OFFSET)); // TODO: set to framebuffer
             } else {
                 types.add(new PoolSamplerInfo(bindingLocation, Integer.parseInt(name.substring(7))));
             }

@@ -55,25 +55,25 @@ open class GuiRenderObject(
         // TODO: is this conversion doing what it should be? should convert int representing unsigned byte to signed byte through wrapping
         vertexConsumer
             .pos(-0.5f, -0.5f, 0f)
-            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte())
+            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte(), 255.toByte())
             .uv(0f, 0f)
             .nextVertex()
 
         vertexConsumer
             .pos(0.5f, -0.5f, 0f)
-            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte())
+            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte(), 255.toByte())
             .uv(1f, 0f)
             .nextVertex()
 
         vertexConsumer
             .pos(0.5f, 0.5f, 0f)
-            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte())
+            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte(), 255.toByte())
             .uv(1f, 1f)
             .nextVertex()
 
         vertexConsumer
             .pos(-0.5f, 0.5f, 0f)
-            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte())
+            .color(colour.x().toInt().toByte(), colour.y().toInt().toByte(), colour.z().toInt().toByte(), 255.toByte())
             .uv(0f, 1f)
             .nextVertex()
 

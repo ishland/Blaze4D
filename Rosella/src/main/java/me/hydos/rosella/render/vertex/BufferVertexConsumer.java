@@ -2,6 +2,7 @@ package me.hydos.rosella.render.vertex;
 
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.memory.Memory;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -11,13 +12,12 @@ import java.util.Objects;
 public final class BufferVertexConsumer implements BufferProvider { // FIXME make this not suck
     private final VertexFormat format;
 
-    private ByteBuffer buffer; // FIXME grow the buffer when needed
+    private final ByteBuffer buffer = MemoryUtil.memAlloc(4096); // FIXME grow the buffer when needed
     private int vertexCount;
     private int debugSize;
 
     public BufferVertexConsumer(VertexFormat format) {
         this.format = format;
-        this.buffer = null;
     }
 
     @Override

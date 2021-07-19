@@ -3,13 +3,16 @@ package me.hydos.rosella.render.texture;
 import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
 import it.unimi.dsi.fastutil.ints.IntPriorityQueue;
 import it.unimi.dsi.fastutil.ints.IntPriorityQueues;
-
-import java.util.*;
 import me.hydos.rosella.memory.Memory;
 import me.hydos.rosella.render.VkKt;
 import me.hydos.rosella.render.renderer.Renderer;
 import me.hydos.rosella.vkobjects.VkCommon;
 import org.lwjgl.vulkan.VK10;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class TextureManager {
 
@@ -76,6 +79,12 @@ public class TextureManager {
         textureMap.get(textureId).setTextureSampler(textureSampler.getPointer());
     }
 
+    /**
+     * Like The Above Method but without caching. Used for blank textures and FBO's
+     *
+     * @param textureId the id of the texture
+     * @param samplerCreateInfo the create info
+     */
     public void setTextureSamplerNoCache(int textureId, SamplerCreateInfo samplerCreateInfo) {
         TextureSampler textureSampler = new TextureSampler(samplerCreateInfo, common.device);
         textureMap.get(textureId).setTextureSampler(textureSampler.getPointer());
