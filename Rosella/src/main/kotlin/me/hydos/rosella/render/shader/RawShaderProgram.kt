@@ -170,7 +170,7 @@ open class RawShaderProgram(
                         VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER -> {
                             if (poolObj is PoolSamplerInfo) {
                                 if (poolObj.samplerIndex == Rosella.MAIN_FBO_OFFSET) {
-                                    val fboImageView = rosella.common.fboManager.mainFbo.imageViews[0]
+                                    val fboImageView = rosella.common.fboManager.activeFbo.images[0]
 
                                     val imageInfo = VkDescriptorImageInfo.callocStack(1, stack)
                                         .imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)

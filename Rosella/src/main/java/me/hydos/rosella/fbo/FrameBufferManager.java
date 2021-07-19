@@ -24,6 +24,7 @@ public class FrameBufferManager {
     private final VkCommon common;
     private final Renderer renderer;
     public final List<FrameBuffer> frameBuffers = new ArrayList<>();
+    private FrameBuffer activeFbo;
 
     public FrameBufferManager(Swapchain swapchain, Renderer renderer, VkCommon common) {
         this.swapchain = swapchain;
@@ -55,7 +56,14 @@ public class FrameBufferManager {
         return framebuffer;
     }
 
-    public FrameBuffer getMainFbo() {
-        return frameBuffers.get(0);
+    public FrameBuffer getActiveFbo() {
+        if (activeFbo == null) {
+            this.activeFbo = frameBuffers.get(0);
+        }
+        return activeFbo;
+    }
+
+    public void setActiveFbo(FrameBuffer frameBuffer) {
+        this.activeFbo = frameBuffer;
     }
 }

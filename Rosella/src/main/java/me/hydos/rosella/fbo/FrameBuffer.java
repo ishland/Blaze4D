@@ -13,11 +13,11 @@ import java.util.List;
 public class FrameBuffer {
 
     public final SimpleFramebufferObjectManager objectManager;
-    public final List<FboImageView> imageViews = new ArrayList<>();
+    public final List<FboImage> images = new ArrayList<>();
 
-    public FrameBuffer(LongList imageViews, Rosella rosella) {
-        for (Long imageView : imageViews) {
-            this.imageViews.add(new FboImageView(imageView, rosella.common));
+    public FrameBuffer(LongList images, Rosella rosella) {
+        for (Long imageView : images) {
+            this.images.add(new FboImage(imageView, rosella.common));
         }
         objectManager = new SimpleFramebufferObjectManager(rosella, rosella.common);
     }

@@ -51,7 +51,7 @@ public class GlobalRenderSystem {
     public static Set<ConsumerRenderObject> currentFrameObjects = Collections.newSetFromMap(new Object2ObjectLinkedOpenHashMap<>()); // this is sorted
 
     // Active Fields
-    public static final int maxTextures = 16; //FIXME vanilla is 12, Iris is 16
+    public static final int maxTextures = 32; //FIXME vanilla is 12, Iris is 16
     public static int[] boundTextureIds = new int[maxTextures]; // TODO: generate an identifier instead of using int id, or switch everything over to ints
     public static int activeTexture = 0;
 
@@ -120,9 +120,9 @@ public class GlobalRenderSystem {
         Blaze4D.rosella.common.device.waitForIdle();
         GlobalRenderSystem.renderConsumers();
 
-        Blaze4D.rosella.getMainFboObjManager().renderObjects.clear();
+        Blaze4D.rosella.getActiveFboManager().renderObjects.clear();
         for (ConsumerRenderObject renderObject : currentFrameObjects) {
-            Blaze4D.rosella.getMainFboObjManager().addObject(renderObject);
+            Blaze4D.rosella.getActiveFboManager().addObject(renderObject);
         }
 
         Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass);

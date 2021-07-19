@@ -6,7 +6,7 @@ import me.hydos.rosella.Rosella;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.device.VulkanQueues;
 import me.hydos.rosella.display.Display;
-import me.hydos.rosella.fbo.FboImageView;
+import me.hydos.rosella.fbo.FboImage;
 import me.hydos.rosella.fbo.FrameBuffer;
 import me.hydos.rosella.fbo.FrameBufferManager;
 import me.hydos.rosella.fbo.RenderPass;
@@ -33,6 +33,7 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -88,7 +89,6 @@ public class Renderer {
     public RenderPass renderPass;
 
     public long commandPool = 0;
-    List<VkCommandBuffer> commandBuffers = new ObjectArrayList<>();
 
     private void createSwapChain(VkCommon common, Display display, SimpleGlobalObjectManager objectManager) {
         this.swapchain = new Swapchain(display, common.device.rawDevice, common.device.physicalDevice, common.surface);
@@ -175,7 +175,7 @@ public class Renderer {
                     .pWaitSemaphores(thisFrame.pImageAvailableSemaphore())
                     .pWaitDstStageMask(stack.ints(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
                     .pSignalSemaphores(thisFrame.pRenderFinishedSemaphore())
-                    .pCommandBuffers(stack.pointers(commandBuffers.get(imageIndex)));
+                    .pCommandBuffers(stack.pointers(common.fboManager.getActiveFbo().images.get(imageIndex).commandBuffers));
 
             ok(vkResetFences(rosella.common.device.rawDevice, thisFrame.pFence()));
             ok(queues.graphicsQueue.vkQueueSubmit(submitInfo, thisFrame.fence()));
@@ -226,7 +226,7 @@ public class Renderer {
         depthBuffer.free(rosella.common.device);
 
         for (FrameBuffer framebuffer : common.fboManager.frameBuffers) {
-            for (FboImageView imageView : framebuffer.imageViews) {
+            for (FboImage imageView : framebuffer.images) {
                 vkDestroyFramebuffer(
                         rosella.common.device.rawDevice,
                         imageView.imageView,
@@ -249,10 +249,13 @@ public class Renderer {
     }
 
     public void clearCommandBuffers(VulkanDevice device) {
-        if (commandBuffers.size() != 0) {
-            vkFreeCommandBuffers(device.rawDevice, commandPool, Memory.asPointerBuffer(commandBuffers));
-            commandBuffers.clear();
+        List<VkCommandBuffer> commandBuffers = new ArrayList<>();
+        for (FboImage fboImage : common.fboManager.getActiveFbo().images) {
+            if (fboImage.commandBuffers != null) {
+                commandBuffers.add(fboImage.commandBuffers);
+            }
         }
+        vkFreeCommandBuffers(device.rawDevice, commandPool, Memory.asPointerBuffer(commandBuffers));
     }
 
     private void createSyncObjects() {
@@ -324,9 +327,7 @@ public class Renderer {
             requireHardRebuild = false;
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                int commandBuffersCount = frameBuffer.imageViews.size();
-
-                commandBuffers = new ObjectArrayList<>(commandBuffersCount);
+                int commandBuffersCount = frameBuffer.images.size();
 
                 PointerBuffer pCommandBuffers = VkKt.allocateCmdBuffers(
                         stack,
@@ -337,11 +338,9 @@ public class Renderer {
                 );
 
                 for (int i = 0; i < commandBuffersCount; i++) {
-                    commandBuffers.add(
-                            new VkCommandBuffer(
-                                    pCommandBuffers.get(i),
-                                    common.device.rawDevice
-                            )
+                    common.fboManager.getActiveFbo().images.get(i).commandBuffers = new VkCommandBuffer(
+                            pCommandBuffers.get(i),
+                            common.device.rawDevice
                     );
                 }
 
@@ -358,9 +357,9 @@ public class Renderer {
                 }
 
                 for (int i = 0; i < commandBuffersCount; i++) {
-                    VkCommandBuffer commandBuffer = commandBuffers.get(i);
+                    VkCommandBuffer commandBuffer = common.fboManager.getActiveFbo().images.get(i).commandBuffers;
                     ok(vkBeginCommandBuffer(commandBuffer, beginInfo));
-                    renderPassInfo.framebuffer(frameBuffer.imageViews.get(i).imageView);
+                    renderPassInfo.framebuffer(frameBuffer.images.get(i).imageView);
 
                     vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

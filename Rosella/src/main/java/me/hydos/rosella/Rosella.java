@@ -3,6 +3,7 @@ package me.hydos.rosella;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.device.VulkanQueues;
 import me.hydos.rosella.display.Display;
+import me.hydos.rosella.fbo.FrameBuffer;
 import me.hydos.rosella.logging.DebugLogger;
 import me.hydos.rosella.logging.DefaultDebugLogger;
 import me.hydos.rosella.memory.ThreadPoolMemory;
@@ -81,8 +82,8 @@ public class Rosella {
      *
      * @return the main FBO's object manager
      */
-    public SimpleFramebufferObjectManager getMainFboObjManager() {
-        return common.fboManager.getMainFbo().objectManager;
+    public SimpleFramebufferObjectManager getActiveFboManager() {
+        return common.fboManager.getActiveFbo().objectManager;
     }
 
     /**

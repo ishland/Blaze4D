@@ -14,7 +14,6 @@
     "integration.GlDebugInfoMixin",
     "integration.GlDebugMixin",
     "integration.GlStateManagerMixin",
-    "integration.MinecraftClientMixin",
     "integration.VideoWarningManagerMixin",
     "integration.WindowFramebufferMixin",
     "integration.WindowMixin",

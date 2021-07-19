@@ -64,11 +64,11 @@ public class PortalJava {
     }
 
     private static void setupMainMenuScene() {
-        rosella.getMainFboObjManager().addObject(
+        rosella.getActiveFboManager().addObject(
                 new GuiRenderObject(menuBackground, -1f, new Vector3f(0, 0, 0), 1.5f, 1f, viewMatrix, projectionMatrix)
         );
 
-        rosella.getMainFboObjManager().addObject(
+        rosella.getActiveFboManager().addObject(
                 new GuiRenderObject(portalLogo, -0.9f, new Vector3f(0, 0, 0), 0.4f, 0.1f, -1f, -2.6f, viewMatrix, projectionMatrix)
         );
     }
