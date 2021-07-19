@@ -54,8 +54,6 @@ public class FrameBufferManager {
         }
 
         FrameBuffer framebuffer = new FrameBuffer(imageViews, rosella);
-        common.shaderManager = new ShaderManager(rosella);
-        common.textureManager = new TextureManager(common);
         frameBuffers.add(framebuffer);
         return framebuffer;
     }

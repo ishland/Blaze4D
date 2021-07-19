@@ -19,9 +19,11 @@ import me.hydos.rosella.render.info.RenderInfo;
 import me.hydos.rosella.render.material.Material;
 import me.hydos.rosella.render.material.PipelineManager;
 import me.hydos.rosella.render.shader.RawShaderProgram;
+import me.hydos.rosella.render.shader.ShaderManager;
 import me.hydos.rosella.render.swapchain.DepthBuffer;
 import me.hydos.rosella.render.swapchain.Frame;
 import me.hydos.rosella.render.swapchain.Swapchain;
+import me.hydos.rosella.render.texture.TextureManager;
 import me.hydos.rosella.scene.object.SimpleGlobalObjectManager;
 import me.hydos.rosella.util.Color;
 import me.hydos.rosella.vkobjects.VkCommon;
@@ -82,6 +84,8 @@ public class Renderer {
 
         VkKt.createCmdPool(common.device, this, common.surface);
         createSwapChain(common, common.display, ((SimpleGlobalObjectManager) rosella.objectManager));
+        common.shaderManager = new ShaderManager(rosella);
+        common.textureManager = new TextureManager(common);
         initialSwapchainCreated = true;
     }
 
@@ -98,6 +102,7 @@ public class Renderer {
         common.pipelineManager = new PipelineManager(common, this);
         depthBuffer.createDepthResources(common.device, swapchain, this);
         common.fboManager.createFrameBuffer(renderPass, rosella);
+
 
         // Engine may still be initialising so we do a null check just in case
         if (common.pipelineManager != null) {
