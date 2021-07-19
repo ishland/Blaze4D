@@ -1,5 +1,6 @@
 package me.hydos.rosella.ubo;
 
+import me.hydos.rosella.Rosella;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.memory.Memory;
 import me.hydos.rosella.render.descriptorsets.DescriptorSets;
@@ -43,12 +44,12 @@ public class DescriptorManager {
      * @param textures the {@link Texture[]} array to use with the {@link DescriptorSets}
      * @param ubo      the {@link Ubo} to use with the {@link DescriptorSets}
      */
-    public void createNewDescriptor(Texture[] textures, Ubo ubo) {
+    public void createNewDescriptor(Texture[] textures, Ubo ubo, Rosella rosella) {
         activeDescriptorCount++;
         if (maxObjects <= activeDescriptorCount) {
             throw new RuntimeException("Too many Descriptor Sets are being used at once (max is " + activeDescriptorCount + ")");
         }
-        program.getRaw().createDescriptorSets(swapchain, LOGGER, textures, ubo);
+        program.getRaw().createDescriptorSets(swapchain, LOGGER, textures, ubo, rosella);
     }
 
     public void freeDescriptorSets(DescriptorSets set) {

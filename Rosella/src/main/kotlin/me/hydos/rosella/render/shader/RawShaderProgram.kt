@@ -2,6 +2,7 @@ package me.hydos.rosella.render.shader
 
 import it.unimi.dsi.fastutil.Hash.VERY_FAST_LOAD_FACTOR
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet
+import me.hydos.rosella.Rosella
 import me.hydos.rosella.device.VulkanDevice
 import me.hydos.rosella.memory.Memory
 import me.hydos.rosella.render.descriptorsets.DescriptorSets
@@ -13,6 +14,7 @@ import me.hydos.rosella.render.texture.Texture
 import me.hydos.rosella.render.texture.TextureManager
 import me.hydos.rosella.render.util.ok
 import me.hydos.rosella.scene.`object`.impl.SimpleFramebufferObjectManager
+import org.apache.logging.log4j.Logger
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
@@ -113,9 +115,10 @@ open class RawShaderProgram(
 
     fun createDescriptorSets(
         swapchain: Swapchain,
-        logger: org.apache.logging.log4j.Logger,
-        currentTextures: Array<Texture?>,
-        ubo: Ubo
+        logger: Logger,
+        currentTextures: Array<Texture>,
+        ubo: Ubo,
+        rosella: Rosella
     ) {
         this.preparableTextures.addAll(currentTextures)
 
@@ -166,18 +169,25 @@ open class RawShaderProgram(
 
                         VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER -> {
                             if (poolObj is PoolSamplerInfo) {
-                                val texture = if (poolObj.samplerIndex == -1) {
-                                    TextureManager.BLANK_TEXTURE
+                                if (poolObj.samplerIndex == Rosella.MAIN_FBO_OFFSET) {
+                                    val fboImageView = rosella.common.fboManager.mainFbo.imageViews[0]
+
+                                    val imageInfo = VkDescriptorImageInfo.callocStack(1, stack)
+                                        .imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+                                        .imageView(fboImageView.imageView)
+                                        .sampler(fboImageView.sampler.pointer)
+
+                                    descriptorWrite.pImageInfo(imageInfo)
                                 } else {
-                                    currentTextures[poolObj.samplerIndex] ?: TextureManager.BLANK_TEXTURE
+                                    val texture = currentTextures[poolObj.samplerIndex] ?: TextureManager.BLANK_TEXTURE
+
+                                    val imageInfo = VkDescriptorImageInfo.callocStack(1, stack)
+                                        .imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+                                        .imageView(texture.textureImage.view)
+                                        .sampler(texture.textureSampler!!)
+
+                                    descriptorWrite.pImageInfo(imageInfo)
                                 }
-
-                                val imageInfo = VkDescriptorImageInfo.callocStack(1, stack)
-                                    .imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-                                    .imageView(texture.textureImage.view)
-                                    .sampler(texture.textureSampler!!)
-
-                                descriptorWrite.pImageInfo(imageInfo)
                             }
                         }
                     }

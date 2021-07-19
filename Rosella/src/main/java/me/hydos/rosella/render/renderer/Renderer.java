@@ -6,6 +6,7 @@ import me.hydos.rosella.Rosella;
 import me.hydos.rosella.device.VulkanDevice;
 import me.hydos.rosella.device.VulkanQueues;
 import me.hydos.rosella.display.Display;
+import me.hydos.rosella.fbo.FboImageView;
 import me.hydos.rosella.fbo.FrameBuffer;
 import me.hydos.rosella.fbo.FrameBufferManager;
 import me.hydos.rosella.fbo.RenderPass;
@@ -225,10 +226,10 @@ public class Renderer {
         depthBuffer.free(rosella.common.device);
 
         for (FrameBuffer framebuffer : common.fboManager.frameBuffers) {
-            for (long imageView : framebuffer.imageViews) {
+            for (FboImageView imageView : framebuffer.imageViews) {
                 vkDestroyFramebuffer(
                         rosella.common.device.rawDevice,
-                        imageView,
+                        imageView.imageView,
                         null
                 );
             }
@@ -359,7 +360,7 @@ public class Renderer {
                 for (int i = 0; i < commandBuffersCount; i++) {
                     VkCommandBuffer commandBuffer = commandBuffers.get(i);
                     ok(vkBeginCommandBuffer(commandBuffer, beginInfo));
-                    renderPassInfo.framebuffer(frameBuffer.imageViews.getLong(i));
+                    renderPassInfo.framebuffer(frameBuffer.imageViews.get(i).imageView);
 
                     vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static me.hydos.rosella.Rosella.MAIN_FBO_OFFSET;
+
 public class MinecraftShaderProgram extends RawShaderProgram {
 
     public static final Map<String, MinecraftUbo.AddUboMemoryStep> UBO_MEMORY_STEP_MAP;
     public static final Map<Integer, Integer> UNIFORM_SIZES;
-    public static final int MAIN_FBO_OFFSET = -10;
 
     static {
         UBO_MEMORY_STEP_MAP = new ImmutableMap.Builder<String, MinecraftUbo.AddUboMemoryStep>()
@@ -71,7 +72,7 @@ public class MinecraftShaderProgram extends RawShaderProgram {
             String name = sampler.getKey();
             int bindingLocation = sampler.getIntValue();
             if (name.equals("DiffuseSampler")) {
-                types.add(new PoolSamplerInfo(bindingLocation, MAIN_FBO_OFFSET)); // TODO: set to framebuffer
+                types.add(new PoolSamplerInfo(bindingLocation, MAIN_FBO_OFFSET));
             } else {
                 types.add(new PoolSamplerInfo(bindingLocation, Integer.parseInt(name.substring(7))));
             }

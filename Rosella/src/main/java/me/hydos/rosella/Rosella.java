@@ -40,6 +40,7 @@ public class Rosella {
     public static final Logger LOGGER = LogManager.getLogger("Rosella", new StringFormatterMessageFactory());
     public static final int VULKAN_VERSION = VK_API_VERSION_1_0;
     public static final int POLYGON_MODE = VK_POLYGON_MODE_FILL;
+    public static final int MAIN_FBO_OFFSET = -10;
     public final GlobalBufferManager bufferManager;
     public final GlobalObjectManager objectManager;
     public final VkCommon common = new VkCommon();
