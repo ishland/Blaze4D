@@ -260,7 +260,10 @@ public class Renderer {
                 commandBuffers.add(fboImage.commandBuffers);
             }
         }
-        vkFreeCommandBuffers(device.rawDevice, commandPool, Memory.asPointerBuffer(commandBuffers));
+
+        if(commandBuffers.size() != 0) {
+            vkFreeCommandBuffers(device.rawDevice, commandPool, Memory.asPointerBuffer(commandBuffers));
+        }
     }
 
     private void createSyncObjects() {
@@ -383,10 +386,9 @@ public class Renderer {
                                 );
                             }
                         }
-
-                        vkCmdEndRenderPass(commandBuffer);
-                        ok(vkEndCommandBuffer(commandBuffer));
                     }
+                    vkCmdEndRenderPass(commandBuffer);
+                    ok(vkEndCommandBuffer(commandBuffer));
                 }
             }
         }
