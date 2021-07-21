@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIntImmutablePair;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class VanillaShaderProcessor {
                 if (type.equals("sampler2D")) {
                     String name = uniformMatcher.group(2);
                     int existingBinding = currentSamplerBindings.getInt(name);
-                    if (existingBinding == GlobalRenderSystem.SAMPLER_NOT_BOUND) {
+                    if (existingBinding == VanillaRenderSystem.SAMPLER_NOT_BOUND) {
                         currentSamplerBindings.put(name, samplerBinding);
                         lines.set(i, line.replace("uniform", "layout(binding = " + samplerBinding++ + ") uniform"));
                     } else {

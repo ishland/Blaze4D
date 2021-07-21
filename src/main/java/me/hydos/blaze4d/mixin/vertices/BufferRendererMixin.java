@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import me.hydos.blaze4d.Blaze4D;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
 import me.hydos.rosella.memory.ManagedBuffer;
 import org.joml.Matrix4f;
@@ -25,11 +25,11 @@ public class BufferRendererMixin {
      */
     @Overwrite
     public static void end(BufferBuilder bufferBuilder) {
-        Matrix4f projMatrix = new Matrix4f(GlobalRenderSystem.projectionMatrix);
-        Matrix4f modelViewMatrix = new Matrix4f(GlobalRenderSystem.modelViewMatrix);
-        Vector3f chunkOffset = new Vector3f(GlobalRenderSystem.chunkOffset);
-        com.mojang.math.Vector3f shaderLightDirections0 = GlobalRenderSystem.shaderLightDirections0.copy();
-        com.mojang.math.Vector3f shaderLightDirections1 = GlobalRenderSystem.shaderLightDirections1.copy();
+        Matrix4f projMatrix = new Matrix4f(VanillaRenderSystem.projectionMatrix);
+        Matrix4f modelViewMatrix = new Matrix4f(VanillaRenderSystem.modelViewMatrix);
+        Vector3f chunkOffset = new Vector3f(VanillaRenderSystem.chunkOffset);
+        com.mojang.math.Vector3f shaderLightDirections0 = VanillaRenderSystem.shaderLightDirections0.copy();
+        com.mojang.math.Vector3f shaderLightDirections1 = VanillaRenderSystem.shaderLightDirections1.copy();
 
         Pair<BufferBuilder.DrawState, ByteBuffer> drawData = bufferBuilder.popNextBuffer();
         BufferBuilder.DrawState drawState = drawData.getFirst();
@@ -43,16 +43,16 @@ public class BufferRendererMixin {
             ByteBuffer copiedBuffer = MemoryUtil.memAlloc(drawState.vertexBufferSize());
             copiedBuffer.put(0, originalBuffer, 0, drawState.vertexBufferSize());
 
-            ObjectIntPair<ManagedBuffer<ByteBuffer>> indexBufferPair = GlobalRenderSystem.createIndices(drawState.mode(), drawState.vertexCount());
+            ObjectIntPair<ManagedBuffer<ByteBuffer>> indexBufferPair = VanillaRenderSystem.createIndices(drawState.mode(), drawState.vertexCount());
 
-            GlobalRenderSystem.uploadAsyncCreatableObject(
+            VanillaRenderSystem.uploadAsyncCreatableObject(
                     new ManagedBuffer<>(copiedBuffer, true),
                     indexBufferPair.key(),
                     indexBufferPair.valueInt(),
                     ConversionUtils.FORMAT_CONVERSION_MAP.get(drawState.format().getElements()),
-                    GlobalRenderSystem.activeShader,
-                    GlobalRenderSystem.createTextureArray(),
-                    GlobalRenderSystem.currentStateInfo.snapshot(),
+                    VanillaRenderSystem.activeShader,
+                    VanillaRenderSystem.createTextureArray(),
+                    VanillaRenderSystem.currentStateInfo.snapshot(),
                     projMatrix,
                     modelViewMatrix,
                     chunkOffset,

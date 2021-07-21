@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import me.hydos.blaze4d.Blaze4D;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
 import me.hydos.rosella.memory.BufferInfo;
 import me.hydos.rosella.memory.ManagedBuffer;
@@ -49,7 +49,7 @@ public class VertexBufferMixin {
                 providedBuffer.limit(providedDrawState.vertexBufferSize());
                 BufferInfo vertexBuffer = Blaze4D.rosella.bufferManager.createVertexBuffer(new ManagedBuffer<>(providedBuffer, false));
 
-                ObjectIntPair<ManagedBuffer<ByteBuffer>> indexBufferSourcePair = GlobalRenderSystem.createIndices(providedDrawState.mode(), providedDrawState.vertexCount());
+                ObjectIntPair<ManagedBuffer<ByteBuffer>> indexBufferSourcePair = VanillaRenderSystem.createIndices(providedDrawState.mode(), providedDrawState.vertexCount());
                 int indexCount = indexBufferSourcePair.valueInt();
                 BufferInfo indexBuffer = Blaze4D.rosella.bufferManager.createIndexBuffer(indexBufferSourcePair.key());
 
@@ -70,9 +70,9 @@ public class VertexBufferMixin {
     public void _drawWithShader(com.mojang.math.Matrix4f mcModelViewMatrix, com.mojang.math.Matrix4f mcProjectionMatrix, ShaderInstance shader) {
         Matrix4f projMatrix = ConversionUtils.mcToJomlProjectionMatrix(mcProjectionMatrix);
         Matrix4f modelViewMatrix = ConversionUtils.mcToJomlMatrix(mcModelViewMatrix);
-        Vector3f chunkOffset = new Vector3f(GlobalRenderSystem.chunkOffset);
-        com.mojang.math.Vector3f shaderLightDirections0 = GlobalRenderSystem.shaderLightDirections0.copy();
-        com.mojang.math.Vector3f shaderLightDirections1 = GlobalRenderSystem.shaderLightDirections1.copy();
+        Vector3f chunkOffset = new Vector3f(VanillaRenderSystem.chunkOffset);
+        com.mojang.math.Vector3f shaderLightDirections0 = VanillaRenderSystem.shaderLightDirections0.copy();
+        com.mojang.math.Vector3f shaderLightDirections1 = VanillaRenderSystem.shaderLightDirections1.copy();
 
         addBufferToRosella(projMatrix, modelViewMatrix, chunkOffset, shaderLightDirections0, shaderLightDirections1);
     }
@@ -83,11 +83,11 @@ public class VertexBufferMixin {
      */
     @Overwrite
     public void drawChunkLayer() {
-        Matrix4f projMatrix = new Matrix4f(GlobalRenderSystem.tmpProjectionMatrix);
-        Matrix4f modelViewMatrix = new Matrix4f(GlobalRenderSystem.tmpModelViewMatrix);
-        Vector3f chunkOffset = new Vector3f(GlobalRenderSystem.chunkOffset);
-        com.mojang.math.Vector3f shaderLightDirections0 = GlobalRenderSystem.shaderLightDirections0.copy();
-        com.mojang.math.Vector3f shaderLightDirections1 = GlobalRenderSystem.shaderLightDirections1.copy();
+        Matrix4f projMatrix = new Matrix4f(VanillaRenderSystem.tmpProjectionMatrix);
+        Matrix4f modelViewMatrix = new Matrix4f(VanillaRenderSystem.tmpModelViewMatrix);
+        Vector3f chunkOffset = new Vector3f(VanillaRenderSystem.chunkOffset);
+        com.mojang.math.Vector3f shaderLightDirections0 = VanillaRenderSystem.shaderLightDirections0.copy();
+        com.mojang.math.Vector3f shaderLightDirections1 = VanillaRenderSystem.shaderLightDirections1.copy();
 
         addBufferToRosella(projMatrix, modelViewMatrix, chunkOffset, shaderLightDirections0, shaderLightDirections1);
     }
@@ -95,12 +95,12 @@ public class VertexBufferMixin {
     @Unique
     private void addBufferToRosella(Matrix4f projMatrix, Matrix4f modelViewMatrix, Vector3f chunkOffset, com.mojang.math.Vector3f shaderLightDirections0, com.mojang.math.Vector3f shaderLightDirections1) {
         if (currentRenderInfo != null && drawState != null) {
-            GlobalRenderSystem.uploadPreCreatedObject(
+            VanillaRenderSystem.uploadPreCreatedObject(
                     currentRenderInfo,
                     ConversionUtils.FORMAT_CONVERSION_MAP.get(drawState.format().getElements()),
-                    GlobalRenderSystem.activeShader,
-                    GlobalRenderSystem.createTextureArray(),
-                    GlobalRenderSystem.currentStateInfo.snapshot(),
+                    VanillaRenderSystem.activeShader,
+                    VanillaRenderSystem.createTextureArray(),
+                    VanillaRenderSystem.currentStateInfo.snapshot(),
                     projMatrix,
                     modelViewMatrix,
                     chunkOffset,

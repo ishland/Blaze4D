@@ -2,14 +2,18 @@
   "required": true,
   "minVersion": "0.8",
   "package": "me.hydos.blaze4d.mixin",
+  "plugin": "me.hydos.blaze4d.mixin.Blaze4DMixinPlugin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "integration.GameRendererMixin"
+    "integration.GameRendererMixin",
+    "sodium.GlVertexArrayMixin",
+    "sodium.RegionChunkRendererMixin",
+    "sodium.RenderRegionMixin",
+    "sodium.ShaderLoaderMixin"
   ],
   "client": [
     "blaze3d.RenderSystemMixin",
     "buffers.GlStateManagerMixin",
-    "debug.Sprite$AnimationMixin",
     "integration.FramebufferMixin",
     "integration.GlDebugInfoMixin",
     "integration.GlDebugMixin",

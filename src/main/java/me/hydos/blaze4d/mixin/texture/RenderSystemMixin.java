@@ -1,7 +1,7 @@
 package me.hydos.blaze4d.mixin.texture;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -26,24 +26,24 @@ public class RenderSystemMixin {
     }
 
     private static void setTexture(int i, ResourceLocation identifier, CallbackInfo ci) {
-        if (i >= 0 && i < GlobalRenderSystem.boundTextureIds.length) {
+        if (i >= 0 && i < VanillaRenderSystem.boundTextureIds.length) {
             TextureManager textureManager = Minecraft.getInstance().getTextureManager();
             AbstractTexture abstractTexture = textureManager.getTexture(identifier);
-            GlobalRenderSystem.boundTextureIds[i] = abstractTexture.getId();
+            VanillaRenderSystem.boundTextureIds[i] = abstractTexture.getId();
         }
         ci.cancel();
     }
 
     @Inject(method = "setShaderTexture(II)V", at = @At("HEAD"), cancellable = true)
     private static void setTextureFromId(int i, int j, CallbackInfo ci) {
-        if (i >= 0 && i < GlobalRenderSystem.boundTextureIds.length) {
-            GlobalRenderSystem.boundTextureIds[i] = j;
+        if (i >= 0 && i < VanillaRenderSystem.boundTextureIds.length) {
+            VanillaRenderSystem.boundTextureIds[i] = j;
         }
         ci.cancel();
     }
 
     @Inject(method = "getShaderTexture", at = @At("HEAD"), cancellable = true)
     private static void getTextureFromUs(int i, CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(i >= 0 && i < GlobalRenderSystem.boundTextureIds.length ? GlobalRenderSystem.boundTextureIds[i] : 0);
+        cir.setReturnValue(i >= 0 && i < VanillaRenderSystem.boundTextureIds.length ? VanillaRenderSystem.boundTextureIds[i] : 0);
     }
 }

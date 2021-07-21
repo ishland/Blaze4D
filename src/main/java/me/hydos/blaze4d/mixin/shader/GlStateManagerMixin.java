@@ -3,7 +3,7 @@ package me.hydos.blaze4d.mixin.shader;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.hydos.blaze4d.Blaze4D;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 import me.hydos.blaze4d.api.shader.MinecraftShaderProgram;
 import me.hydos.blaze4d.api.shader.ShaderContext;
 import me.hydos.blaze4d.api.util.ByteArrayResource;
@@ -42,9 +42,9 @@ public class GlStateManagerMixin {
         ShaderContext shaderContext = new ShaderContext();
         shaderContext.glShaderType = type;
         shaderContext.rosellaShaderType = rosellaType;
-        GlobalRenderSystem.SHADER_MAP.put(GlobalRenderSystem.nextShaderId, shaderContext);
-        GlobalRenderSystem.nextShaderId++;
-        return GlobalRenderSystem.nextShaderId - 1;
+        VanillaRenderSystem.SHADER_MAP.put(VanillaRenderSystem.nextShaderId, shaderContext);
+        VanillaRenderSystem.nextShaderId++;
+        return VanillaRenderSystem.nextShaderId - 1;
     }
 
     /**
@@ -54,7 +54,7 @@ public class GlStateManagerMixin {
     @Overwrite
     public static void glShaderSource(int shader, List<String> shaderLines) {
         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-        ShaderContext context = GlobalRenderSystem.SHADER_MAP.get(shader);
+        ShaderContext context = VanillaRenderSystem.SHADER_MAP.get(shader);
         if (context == null) {
             throw new RuntimeException("Failed to get ShaderContext. (No shader was found with id " + shader + ")");
         }
@@ -102,14 +102,14 @@ public class GlStateManagerMixin {
                 null,
                 Blaze4D.rosella.common.device,
                 Blaze4D.rosella.common.memory,
-                GlobalRenderSystem.DEFAULT_MAX_OBJECTS,
-                GlobalRenderSystem.blaze4d$capturedShaderProgram.blaze4d$getUniforms(),
-                GlobalRenderSystem.processedSamplers);
-        GlobalRenderSystem.processedSamplers.clear();
-        GlobalRenderSystem.currentSamplerBinding = 1;
-        GlobalRenderSystem.SHADER_PROGRAM_MAP.put(GlobalRenderSystem.nextShaderProgramId, program);
+                VanillaRenderSystem.DEFAULT_MAX_OBJECTS,
+                VanillaRenderSystem.blaze4d$capturedShaderProgram.blaze4d$getUniforms(),
+                VanillaRenderSystem.processedSamplers);
+        VanillaRenderSystem.processedSamplers.clear();
+        VanillaRenderSystem.currentSamplerBinding = 1;
+        VanillaRenderSystem.SHADER_PROGRAM_MAP.put(VanillaRenderSystem.nextShaderProgramId, program);
         Blaze4D.rosella.renderer.rebuildCommandBuffers(Blaze4D.rosella.renderer.renderPass, (SimpleObjectManager) Blaze4D.rosella.objectManager);
-        return GlobalRenderSystem.nextShaderProgramId++;
+        return VanillaRenderSystem.nextShaderProgramId++;
     }
 
     /**
@@ -119,8 +119,8 @@ public class GlStateManagerMixin {
     @Overwrite
     public static void glAttachShader(int programId, int shaderId) {
         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-        ShaderContext shader = GlobalRenderSystem.SHADER_MAP.get(shaderId);
-        RawShaderProgram program = GlobalRenderSystem.SHADER_PROGRAM_MAP.get(programId);
+        ShaderContext shader = VanillaRenderSystem.SHADER_MAP.get(shaderId);
+        RawShaderProgram program = VanillaRenderSystem.SHADER_PROGRAM_MAP.get(programId);
         if (program == null) {
             throw new RuntimeException("Shader was requested without begin registered");
         }
@@ -141,8 +141,8 @@ public class GlStateManagerMixin {
     @Overwrite
     public static void glLinkProgram(int program) {
         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-        Identifier id = GlobalRenderSystem.generateId(program);
-        Blaze4D.rosella.objectManager.addShader(GlobalRenderSystem.SHADER_PROGRAM_MAP.get(program));
+        Identifier id = VanillaRenderSystem.generateId(program);
+        Blaze4D.rosella.objectManager.addShader(VanillaRenderSystem.SHADER_PROGRAM_MAP.get(program));
     }
 
     /**
@@ -172,7 +172,7 @@ public class GlStateManagerMixin {
                 return 1;
             }
 
-            default -> GlobalRenderSystem.programErrorLog = "glGetProgramI is not implemented for " + pname;
+            default -> VanillaRenderSystem.programErrorLog = "glGetProgramI is not implemented for " + pname;
         }
         return 0;
     }
@@ -186,8 +186,8 @@ public class GlStateManagerMixin {
     @Overwrite
     public static String glGetProgramInfoLog(int program, int maxLength) {
         RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-        String lastError = GlobalRenderSystem.programErrorLog;
-        GlobalRenderSystem.programErrorLog = "";
+        String lastError = VanillaRenderSystem.programErrorLog;
+        VanillaRenderSystem.programErrorLog = "";
         return lastError;
     }
 

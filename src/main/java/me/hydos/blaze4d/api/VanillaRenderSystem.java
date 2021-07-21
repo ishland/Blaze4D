@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Used to make bits of the code easier to manage.
  */
-public class GlobalRenderSystem {
+public class VanillaRenderSystem {
     // Shader Fields
     public static final Map<Integer, ShaderContext> SHADER_MAP = new Int2ObjectOpenHashMap<>();
     public static final Map<Integer, RawShaderProgram> SHADER_PROGRAM_MAP = new Int2ObjectOpenHashMap<>();

@@ -3,7 +3,7 @@ package me.hydos.blaze4d.mixin.integration;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.hydos.blaze4d.Blaze4D;
-import me.hydos.blaze4d.api.GlobalRenderSystem;
+import me.hydos.blaze4d.api.VanillaRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
 import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
 import me.hydos.rosella.util.Color;
@@ -37,88 +37,88 @@ public class GlStateManagerMixin {
 
     @Inject(method = "_enableColorLogicOp", at = @At("HEAD"), cancellable = true)
     private static void enableColorLogicOp(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setColorLogicOpEnabled(true);
+        VanillaRenderSystem.currentStateInfo.setColorLogicOpEnabled(true);
         ci.cancel();
     }
 
     @Inject(method = "_disableColorLogicOp", at = @At("HEAD"), cancellable = true)
     private static void disableColorLogicOp(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setColorLogicOpEnabled(false);
+        VanillaRenderSystem.currentStateInfo.setColorLogicOpEnabled(false);
         ci.cancel();
     }
 
     @Inject(method = "_logicOp", at = @At("HEAD"), cancellable = true)
     private static void logicOp(int op, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setColorLogicOp(ConversionUtils.glToVkLogicOp(op));
+        VanillaRenderSystem.currentStateInfo.setColorLogicOp(ConversionUtils.glToVkLogicOp(op));
         ci.cancel();
     }
 
     @Inject(method = "_enableDepthTest", at = @At("HEAD"), cancellable = true)
     private static void enableDepthTest(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setDepthTestEnabled(true);
+        VanillaRenderSystem.currentStateInfo.setDepthTestEnabled(true);
         ci.cancel();
     }
 
     @Inject(method = "_disableDepthTest", at = @At("HEAD"), cancellable = true)
     private static void disableDepthTest(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setDepthTestEnabled(false);
+        VanillaRenderSystem.currentStateInfo.setDepthTestEnabled(false);
         ci.cancel();
     }
 
     @Inject(method = "_enableScissorTest", at = @At("HEAD"), cancellable = true)
     private static void enableScissorTest(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setScissorEnabled(true);
+        VanillaRenderSystem.currentStateInfo.setScissorEnabled(true);
         ci.cancel();
     }
 
     @Inject(method = "_disableScissorTest", at = @At("HEAD"), cancellable = true)
     private static void disableScissorTest(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setScissorEnabled(false);
+        VanillaRenderSystem.currentStateInfo.setScissorEnabled(false);
         ci.cancel();
     }
 
     @Inject(method = "_scissorBox", at = @At("HEAD"), cancellable = true)
     private static void scissorBox(int x, int y, int width, int height, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setScissorX(x);
-        GlobalRenderSystem.currentStateInfo.setScissorY(y);
-        GlobalRenderSystem.currentStateInfo.setScissorWidth(width);
-        GlobalRenderSystem.currentStateInfo.setScissorHeight(height);
+        VanillaRenderSystem.currentStateInfo.setScissorX(x);
+        VanillaRenderSystem.currentStateInfo.setScissorY(y);
+        VanillaRenderSystem.currentStateInfo.setScissorWidth(width);
+        VanillaRenderSystem.currentStateInfo.setScissorHeight(height);
         ci.cancel();
     }
 
     @Inject(method = "_enableCull", at = @At("HEAD"), cancellable = true)
     private static void enableCull(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setCullEnabled(true);
+        VanillaRenderSystem.currentStateInfo.setCullEnabled(true);
         ci.cancel();
     }
 
     @Inject(method = "_disableCull", at = @At("HEAD"), cancellable = true)
     private static void disableCull(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setCullEnabled(false);
+        VanillaRenderSystem.currentStateInfo.setCullEnabled(false);
         ci.cancel();
     }
 
     @Inject(method = "_depthFunc", at = @At("HEAD"), cancellable = true)
     private static void depthFunc(int func, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setDepthCompareOp(ConversionUtils.glToVkDepthFunc(func));
+        VanillaRenderSystem.currentStateInfo.setDepthCompareOp(ConversionUtils.glToVkDepthFunc(func));
         ci.cancel();
     }
 
     @Inject(method = "_enableBlend", at = @At("HEAD"), cancellable = true)
     private static void enableBlend(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setBlendEnabled(true);
+        VanillaRenderSystem.currentStateInfo.setBlendEnabled(true);
         ci.cancel();
     }
 
     @Inject(method = "_disableBlend", at = @At("HEAD"), cancellable = true)
     private static void disableBlend(CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setBlendEnabled(false);
+        VanillaRenderSystem.currentStateInfo.setBlendEnabled(false);
         ci.cancel();
     }
 
     @Inject(method = "_blendEquation", at = @At("HEAD"), cancellable = true)
     private static void blendEquation(int mode, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setBlendOp(ConversionUtils.glToVkBlendOp(mode));
+        VanillaRenderSystem.currentStateInfo.setBlendOp(ConversionUtils.glToVkBlendOp(mode));
         ci.cancel();
     }
 
@@ -126,19 +126,19 @@ public class GlStateManagerMixin {
     private static void blendFunc(int srcFactor, int dstFactor, CallbackInfo ci) {
         int vkSrcFactor = ConversionUtils.glToVkBlendFunc(srcFactor);
         int vkDstFactor = ConversionUtils.glToVkBlendFunc(dstFactor);
-        GlobalRenderSystem.currentStateInfo.setSrcColorBlendFactor(vkSrcFactor);
-        GlobalRenderSystem.currentStateInfo.setDstColorBlendFactor(vkDstFactor);
-        GlobalRenderSystem.currentStateInfo.setSrcAlphaBlendFactor(vkSrcFactor);
-        GlobalRenderSystem.currentStateInfo.setDstAlphaBlendFactor(vkDstFactor);
+        VanillaRenderSystem.currentStateInfo.setSrcColorBlendFactor(vkSrcFactor);
+        VanillaRenderSystem.currentStateInfo.setDstColorBlendFactor(vkDstFactor);
+        VanillaRenderSystem.currentStateInfo.setSrcAlphaBlendFactor(vkSrcFactor);
+        VanillaRenderSystem.currentStateInfo.setDstAlphaBlendFactor(vkDstFactor);
         ci.cancel();
     }
 
     @Inject(method = "_blendFuncSeparate", at = @At("HEAD"), cancellable = true)
     private static void blendFunc(int srcFactorRGB, int dstFactorRGB, int srcFactorAlpha, int dstFactorAlpha, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setSrcColorBlendFactor(ConversionUtils.glToVkBlendFunc(srcFactorRGB));
-        GlobalRenderSystem.currentStateInfo.setDstColorBlendFactor(ConversionUtils.glToVkBlendFunc(dstFactorRGB));
-        GlobalRenderSystem.currentStateInfo.setSrcAlphaBlendFactor(ConversionUtils.glToVkBlendFunc(srcFactorAlpha));
-        GlobalRenderSystem.currentStateInfo.setDstAlphaBlendFactor(ConversionUtils.glToVkBlendFunc(dstFactorAlpha));
+        VanillaRenderSystem.currentStateInfo.setSrcColorBlendFactor(ConversionUtils.glToVkBlendFunc(srcFactorRGB));
+        VanillaRenderSystem.currentStateInfo.setDstColorBlendFactor(ConversionUtils.glToVkBlendFunc(dstFactorRGB));
+        VanillaRenderSystem.currentStateInfo.setSrcAlphaBlendFactor(ConversionUtils.glToVkBlendFunc(srcFactorAlpha));
+        VanillaRenderSystem.currentStateInfo.setDstAlphaBlendFactor(ConversionUtils.glToVkBlendFunc(dstFactorAlpha));
         ci.cancel();
     }
 
@@ -149,30 +149,30 @@ public class GlStateManagerMixin {
         if (green) colorMask |= VK10.VK_COLOR_COMPONENT_G_BIT;
         if (blue) colorMask |= VK10.VK_COLOR_COMPONENT_B_BIT;
         if (alpha) colorMask |= VK10.VK_COLOR_COMPONENT_A_BIT;
-        GlobalRenderSystem.currentStateInfo.setColorMask(colorMask);
+        VanillaRenderSystem.currentStateInfo.setColorMask(colorMask);
         ci.cancel();
     }
 
     @Inject(method = "_depthMask", at = @At("HEAD"), cancellable = true)
     private static void depthMask(boolean mask, CallbackInfo ci) {
-        GlobalRenderSystem.currentStateInfo.setDepthMask(mask);
+        VanillaRenderSystem.currentStateInfo.setDepthMask(mask);
         ci.cancel();
     }
 
     @Inject(method = "_bindTexture", at = @At("HEAD"), cancellable = true)
     private static void bindTexture(int texture, CallbackInfo ci) {
-        GlobalRenderSystem.boundTextureIds[GlobalRenderSystem.activeTexture] = texture;
+        VanillaRenderSystem.boundTextureIds[VanillaRenderSystem.activeTexture] = texture;
         ci.cancel();
     }
 
     @Inject(method = "_getActiveTexture", at = @At("HEAD"), cancellable = true)
     private static void getActiveTexture(CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(GlobalRenderSystem.activeTexture + GL13.GL_TEXTURE0);
+        cir.setReturnValue(VanillaRenderSystem.activeTexture + GL13.GL_TEXTURE0);
     }
 
     @Inject(method = "_activeTexture", at = @At("HEAD"), cancellable = true)
     private static void activeTexture(int texture, CallbackInfo ci) {
-        GlobalRenderSystem.activeTexture = texture - GL13.GL_TEXTURE0;
+        VanillaRenderSystem.activeTexture = texture - GL13.GL_TEXTURE0;
         ci.cancel();
     }
 

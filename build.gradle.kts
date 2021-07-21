@@ -58,6 +58,8 @@ dependencies {
     })
     modImplementation("net.fabricmc", "fabric-loader", properties["loader_version"].toString())
 
+    modCompileOnly(files("libs/sodium.jar")) // FIXME: this sucks. get sodium to work through maven
+
     include(implementation(project(":Rosella"))!!)
     include(implementation("com.oroarmor", "aftermath", "1.0.0-beta"))
 

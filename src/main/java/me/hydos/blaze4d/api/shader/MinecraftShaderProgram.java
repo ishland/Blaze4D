@@ -38,7 +38,6 @@ public class MinecraftShaderProgram extends RawShaderProgram {
                 .put("ChunkOffset", MinecraftUbo::addChunkOffset)
                 .put("Light0_Direction", MinecraftUbo::addLightDirections0)
                 .put("Light1_Direction", MinecraftUbo::addLightDirections1)
-                .put("EndPortalLayers", MinecraftUbo::addEndPortalLayers)
                 .build();
 
         UNIFORM_SIZES = new ImmutableMap.Builder<Integer, Integer>()
@@ -51,17 +50,14 @@ public class MinecraftShaderProgram extends RawShaderProgram {
                 .put(6, 3 * Float.BYTES)
                 .put(7, 4 * Float.BYTES)
                 .put(10, 4 * 4 * Float.BYTES)
-                .put(11, Integer.BYTES)
                 .build();
     }
 
     private final List<Uniform> uniforms;
-    private final Object2IntMap<String> samplers;
 
     public MinecraftShaderProgram(@Nullable Resource vertexShader, @Nullable Resource fragmentShader, @NotNull VulkanDevice device, @NotNull Memory memory, int maxObjCount, List<Uniform> uniforms, Object2IntMap<String> samplers) {
         super(vertexShader, fragmentShader, device, memory, maxObjCount, createPoolTypes(samplers));
         this.uniforms = uniforms;
-        this.samplers = samplers;
     }
 
     private static PoolObjectInfo[] createPoolTypes(Object2IntMap<String> samplers) {
