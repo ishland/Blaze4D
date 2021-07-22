@@ -60,7 +60,7 @@ public class SimpleObjectManager implements ObjectManager {
 
     @Override
     public Material registerMaterial(Material material) {
-        material.loadTextures(this, rosella); //TODO: ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew ew
+        material.loadTextures(this, rosella);
         unprocessedMaterials.add(material);
         return material;
     }
