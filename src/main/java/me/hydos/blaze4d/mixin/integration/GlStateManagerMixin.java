@@ -2,15 +2,19 @@ package me.hydos.blaze4d.mixin.integration;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.sun.jna.platform.win32.GL;
 import me.hydos.blaze4d.Blaze4D;
 import me.hydos.blaze4d.api.VanillaRenderSystem;
 import me.hydos.blaze4d.api.util.ConversionUtils;
+import me.hydos.rosella.Rosella;
 import me.hydos.rosella.scene.object.impl.SimpleObjectManager;
 import me.hydos.rosella.util.Color;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.vulkan.VK10;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,7 +32,8 @@ public class GlStateManagerMixin {
             "_polygonOffset",
             "_polygonMode",
             "_enablePolygonOffset",
-            "_disablePolygonOffset"
+            "_disablePolygonOffset",
+            "_viewport"
     }, at = @At("HEAD"), cancellable = true)
     private static void unimplementedGlCalls(CallbackInfo ci) {
         //TODO: IMPL
@@ -215,6 +220,32 @@ public class GlStateManagerMixin {
         ci.cancel();
     }
 
+    @Inject(method = "_getString", at = @At("HEAD"), cancellable = true)
+    private static void getString(int glStringId, CallbackInfoReturnable<String> ci) {
+        ci.setReturnValue(
+                switch (glStringId) {
+                    case GL.GL_VENDOR -> tryParseVendorId(Blaze4D.rosella.common.device.properties.vendorId);
+                    case GL.GL_EXTENSIONS -> Blaze4D.rosella.common.device.combinedExtensionsString;
+                    case GL.GL_RENDERER -> Blaze4D.rosella.common.device.properties.deviceName;
+                    case GL.GL_VERSION -> "Vulkan API " + Blaze4D.rosella.common.device.properties.apiVersion;
+                    default -> throw new IllegalStateException("Unexpected value: " + glStringId);
+                }
+        );
+    }
+
+    @Unique
+    private static String tryParseVendorId(int vendorId) {
+        return switch (vendorId) {
+            case 0x10DE -> "NVIDIA Corporation";
+            case 0x1002 -> "AMD";
+            case 0x8086 -> "INTEL";
+            case 0x13B5 -> "ARM";
+            case 0x1010 -> "ImgTec";
+            case 0x5143 -> "Qualcomm";
+            default -> "Vendor unknown. Vendor ID: " + vendorId;
+        };
+    }
+
     /**
      * @author Blaze4D
      * @reason Clear Color Integration
@@ -225,5 +256,18 @@ public class GlStateManagerMixin {
     public static void _clearColor(float red, float green, float blue, float alpha) {
         RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
         Blaze4D.rosella.renderer.lazilyClearColor(new Color(red, green, blue, alpha));
+    }
+
+    @Overwrite
+    public static int _glGenVertexArrays() {
+        return 0;
+    }
+
+    @Overwrite
+    public static void _glBindVertexArray(int i) {
+    }
+
+    @Overwrite
+    public static void _disableVertexAttribArray(int index) {
     }
 }

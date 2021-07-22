@@ -32,6 +32,7 @@ public class VulkanDevice {
     public VkPhysicalDevice physicalDevice;
     public DeviceFeatures deviceFeatures;
     public Properties properties;
+    public String combinedExtensionsString;
 
     /**
      * @param common           the vulkan common variables
@@ -61,9 +62,17 @@ public class VulkanDevice {
 
             for (int i = 0; i < pPhysicalDeviceCount.capacity(); i++) {
                 VkPhysicalDevice device = new VkPhysicalDevice(pPhysicalDevices.get(i), common.vkInstance.rawInstance);
+                Set<String> supportedExtensions = getExtensionStrings(device);
 
-                if (deviceSuitable(device, common)) {
+                if (deviceSuitable(device, common, supportedExtensions)) {
+                    // FIXME this doesn't work if there are multiple gpus in the system, ex integrated and pcie
                     this.physicalDevice = device;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (String extension : supportedExtensions) {
+                        stringBuilder.append(extension).append(" ");
+                    }
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1); // remove extra space
+                    this.combinedExtensionsString = stringBuilder.toString();
                     setDeviceInfo();
                     break;
                 }
@@ -88,10 +97,10 @@ public class VulkanDevice {
                     .sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
                     .pQueueCreateInfos(queueCreateInfos)
                     .pEnabledFeatures(deviceFeatures)
-                    .ppEnabledExtensionNames(asPtrBuffer(REQUIRED_EXTENSIONS, stack));
+                    .ppEnabledExtensionNames(asPtrBuffer(REQUIRED_EXTENSIONS));
 
             if (validationLayers.size() != 0) {
-                deviceCreateInfo.ppEnabledLayerNames(asPtrBuffer(validationLayers, stack));
+                deviceCreateInfo.ppEnabledLayerNames(asPtrBuffer(validationLayers));
             }
 
             PointerBuffer pDevice = stack.pointers(VK_NULL_HANDLE);
@@ -123,10 +132,10 @@ public class VulkanDevice {
      * @param common the Rosella shared fields
      * @return if the physical device can be used
      */
-    private boolean deviceSuitable(VkPhysicalDevice device, VkCommon common) {
+    private boolean deviceSuitable(VkPhysicalDevice device, VkCommon common, Set<String> supportedExtensions) {
         QueueFamilyIndices indices = VkUtils.findQueueFamilies(device, common.surface);
 
-        if (deviceSupportsExtensions(device)) {
+        if (supportedExtensions.containsAll(REQUIRED_EXTENSIONS)) {
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 boolean swapChainAdequate;
                 boolean anisotropySupported;
@@ -210,21 +219,18 @@ public class VulkanDevice {
     }
 
     /**
-     * Checks if a device supports the required extensions.
-     *
      * @param device the device to check
-     * @return if the device supports all required extensions
+     * @return all of the supported extensions of the device as a set of strings.
      */
-    private boolean deviceSupportsExtensions(VkPhysicalDevice device) {
+    private Set<String> getExtensionStrings(VkPhysicalDevice device) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer extensionCount = stack.ints(0);
             ok(vkEnumerateDeviceExtensionProperties(device, (CharSequence) null, extensionCount, null));
             VkExtensionProperties.Buffer availableExtensions = VkExtensionProperties.callocStack(extensionCount.get(0), stack);
             ok(vkEnumerateDeviceExtensionProperties(device, (CharSequence) null, extensionCount, availableExtensions));
-            Set<String> collect = availableExtensions.stream()
+            return availableExtensions.stream()
                     .map(VkExtensionProperties::extensionNameString)
                     .collect(Collectors.toSet());
-            return collect.containsAll(REQUIRED_EXTENSIONS);
         }
     }
 
