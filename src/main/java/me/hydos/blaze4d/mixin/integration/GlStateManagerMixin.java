@@ -40,6 +40,12 @@ public class GlStateManagerMixin {
         ci.cancel();
     }
 
+    @Inject(method = "_getInteger", at = @At("HEAD"), cancellable = true)
+    private static void unimplementedGlCalls1(int pname, CallbackInfoReturnable<Integer> cir) {
+        //TODO: IMPL
+        cir.setReturnValue(1);
+    }
+
     @Inject(method = "_enableColorLogicOp", at = @At("HEAD"), cancellable = true)
     private static void enableColorLogicOp(CallbackInfo ci) {
         VanillaRenderSystem.currentStateInfo.setColorLogicOpEnabled(true);
